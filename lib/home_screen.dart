@@ -1,16 +1,25 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:whatsapp_ui/constants/callsTab_constants/calls_subtitles.dart';
 import 'package:whatsapp_ui/constants/profile_image_constants.dart';
 import 'package:whatsapp_ui/constants/statuesTab_constants/status_subtites.dart';
 import 'package:whatsapp_ui/constants/subtitle_constants.dart';
 import 'package:whatsapp_ui/constants/title_constants.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  String? userImage;
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -18,6 +27,7 @@ class HomeScreen extends StatelessWidget {
         child: Scaffold(
           appBar: AppBar(
             title: Text('Whats App'),
+            backgroundColor: Colors.green,
             actions: [
               Tab(
                 child: Icon(CupertinoIcons.search),
@@ -42,18 +52,35 @@ class HomeScreen extends StatelessWidget {
                         ),
                       ])
             ],
-            bottom: TabBar(tabs: [
-              IconButton(
-                onPressed: () {},
-                icon: Icon(CupertinoIcons.camera),
-              ),
-              Tab(child: Text('Chat')),
-              Tab(child: Text('Status')),
-              Tab(child: Text('Calls')),
-            ]),
+            bottom: TabBar(
+                indicatorColor: Colors.black,
+                labelStyle: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+                unselectedLabelStyle: TextStyle(
+                  fontWeight: FontWeight.w400,
+                ),
+                tabs: const [
+                  Tab(child: Text('Camera')),
+                  Tab(child: Text('Chat')),
+                  Tab(child: Text('Status')),
+                  Tab(child: Text('Calls')),
+                ]),
           ),
           body: TabBarView(children: [
-            Text('Camera'),
+            Center(
+              child: IconButton(
+                onPressed: () {
+                  //For picking up the images from the camera
+                  pickImagefromCamera();
+                },
+                icon: Icon(
+                  CupertinoIcons.camera_circle_fill,
+                  size: 100,
+                ),
+              ),
+            ),
             _chatTaB(),
             _statusTaB(),
             _callTaB(),
@@ -125,5 +152,15 @@ class HomeScreen extends StatelessWidget {
         );
       },
     );
+  }
+
+  //For picking up the images from the camera
+  Future pickImagefromCamera() async {
+    final ImagePicker picker = ImagePicker();
+// click an image.
+    final XFile? image = await picker.pickImage(source: ImageSource.camera);
+    setState(() {
+      userImage = image!.path;
+    });
   }
 }
